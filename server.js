@@ -1,7 +1,6 @@
 const inquirer = require("inquirer");
-
 const mysql = require("mysql");
-const { allowedNodeEnvironmentFlags } = require("process");
+const cTable = require("console.table");
 
 // Creating the variable for the database in mysql workbench
 const connection = mysql.createConnection({
@@ -15,7 +14,7 @@ const connection = mysql.createConnection({
 // Connecting to mysql
 connection.connect((err) => {
   if (err) throw err;
-  // TODO: prompt the user for their next action.
+  console.log("connected as id" + connection.threadId);
   userOptions();
 });
 
@@ -97,90 +96,97 @@ function addDept() {
 }
 
 // Function to add a new role
-function addRole() {
-  connection.query("SELECT * FROM department"),
-    (err, res) => {
-      if (err) throw err;
-      inquirer
-        .prompt([
-          {
-            type: "list",
-            name: "deptId",
-            message: "What is the department this role is in?",
-            choices: function () {
-              const choicesArray = [];
-              for (let i = 0; i < res.length; i++) {
-                choicesArray.push(res[i].name);
-              }
-              return choicesArray;
-            },
-          },
-          {
-            type: "input",
-            name: "title",
-            message: "What is the role title?",
-          },
-          {
-            type: "input",
-            name: "salary",
-            message: "What is the salary for this role?",
-          },
-        ])
-        .then((userInput) => {
-          console.log(userInput);
-          let chosenItem;
-          for (let i = 0; i < res.length; i++) {
-            if (userInput.choice === res[i].name) {
-              chosenItem = res[i];
-            }
-          }
-          if (userInput.deptID === chosenItem.name) {
-            connection.query(
-              "INSERT INTO role SET ?",
-              {
-                name: userInput.title,
-                salary: userInput.salary,
-              },
-              {
-                department_id: chosenItem.id,
-              },
-              (err, res) => {
-                if (err) throw err;
-                console.log(res.affectedRows);
-                userOptions();
-              }
-            );
-          }
-        });
-    };
-}
+// TODO: Pick a dept to add role into
+// function addRole() {
+//   connection.query("SELECT * FROM department"),
+//     (err, res) => {
+//       if (err) throw err;
+//       inquirer
+//         .prompt([
+//           {
+//             type: "list",
+//             name: "deptId",
+//             message: "What is the department this role is in?",
+//             choices: function () {
+//               const choicesArray = [];
+//               for (let i = 0; i < res.length; i++) {
+//                 choicesArray.push(res[i].name);
+//               }
+//               return choicesArray;
+//             },
+//           },
+//           {
+//             type: "input",
+//             name: "title",
+//             message: "What is the role title?",
+//           },
+//           {
+//             type: "input",
+//             name: "salary",
+//             message: "What is the salary for this role?",
+//           },
+//         ])
+//         .then((userInput) => {
+//           console.log(userInput);
+//           let chosenItem;
+//           for (let i = 0; i < res.length; i++) {
+//             if (userInput.choice === res[i].name) {
+//               chosenItem = res[i];
+//             }
+//           }
+//           if (userInput.deptID === chosenItem.name) {
+//             connection.query(
+//               "INSERT INTO role SET ?",
+//               {
+//                 name: userInput.title,
+//                 salary: userInput.salary,
+//               },
+//               {
+//                 department_id: chosenItem.id,
+//               },
+//               (err, res) => {
+//                 if (err) throw err;
+//                 console.log(res.affectedRows);
+//                 userOptions();
+//               }
+//             );
+//           }
+//         });
+//     };
+// }
+
+// function to add a new employee
+function addEmployee() {}
 
 // Function to view all departments
 function viewAllDept() {
-  connection.query("SELECT * FROM department", (err, res) => {
+  connection.query("SELECT name as department FROM department", (err, res) => {
     if (err) throw err;
-    console.table(res);
+    const table = cTable.getTable(res);
+    console.log(table);
     userOptions();
   });
 }
 
 // Function to view all roles
 function viewRoles() {
-    connection.query("SELECT * FROM role", (err, res) => {
-      if (err) throw err;
-      console.table(res);
-      userOptions();
-    });
-  }
+  connection.query("SELECT * FROM role", (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    userOptions();
+  });
+}
 //   Function to view all employees
 function viewEmployees() {
-    connection.query("SELECT * FROM employee", (err, res) => {
-      if (err) throw err;
-      console.table(res);
-      userOptions();
-    });
-  }
+  connection.query("SELECT * FROM employee", (err, res) => {
+    if (err) throw err;
+    console.table(res);
+    userOptions();
+  });
+}
 
+// Function to update en employee role
+function updateEmployeeRole() {}
 
 // When user chooses exit from list of choices, the CLI will end
 function exit() {
