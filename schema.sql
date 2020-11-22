@@ -26,3 +26,8 @@ role_id INTEGER,
 manager_id INTEGER,
 PRIMARY KEY (id)
 );
+
+INSERT INTO department(name)
+VALUES("Engineering"), ("Sales"), ("Finance"), ("Legal");
+
+SELECT * FROM department;
