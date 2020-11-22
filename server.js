@@ -164,6 +164,15 @@ function viewAllDept() {
   });
 }
 
+// Function to view all roles
+function viewRoles() {
+    connection.query("SELECT * FROM role", (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      userOptions();
+    });
+  }
+
 
 
 // When user chooses exit from list of choices, the CLI will end
