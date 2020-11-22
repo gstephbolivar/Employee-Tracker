@@ -170,17 +170,20 @@ function viewAllDept() {
 
 // Function to view all roles
 function viewRoles() {
-  connection.query("SELECT * FROM role", (err, res) => {
+  connection.query("SELECT title FROM role", (err, res) => {
     if (err) throw err;
-    console.table(res);
+    const table = cTable.getTable(res);
+    console.log(table);
     userOptions();
   });
 }
 //   Function to view all employees
 function viewEmployees() {
-  connection.query("SELECT * FROM employee", (err, res) => {
+    // TODO: Figure out how to include a manager in here
+  connection.query("SELECT employee.id, first_name, last_name, role.title, department.name AS department, role.salary FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id", (err, res) => {
     if (err) throw err;
-    console.table(res);
+    const table = cTable.getTable(res);
+    console.log(table);
     userOptions();
   });
 }
