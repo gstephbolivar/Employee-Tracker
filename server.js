@@ -72,29 +72,88 @@ function userOptions() {
 
 // Function to add a new Department
 function addDept() {
-    inquirer
-      .prompt([
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "deptname",
+        message: "What is the name of the department?",
+      },
+    ])
+    .then((userInput) => {
+      console.log(userInput);
+      connection.query(
+        "INSERT INTO department SET ?",
         {
-          type: "input",
-          name: "deptname",
-          message: "What is the name of the department?",
+          name: userInput.deptname,
         },
-      ])
-      .then((userInput) => {
-        console.log(userInput);
-        connection.query(
-          "INSERT INTO department SET ?",
+        (err, res) => {
+          if (err) throw err;
+          console.log(res.affectedRows);
+          userOptions();
+        }
+      );
+    });
+}
+
+// Function to add a new role
+function addRole() {
+  connection.query("SELECT * FROM department"),
+    (err, res) => {
+      if (err) throw err;
+      inquirer
+        .prompt([
           {
-            name: userInput.deptname,
+            type: "list",
+            name: "deptId",
+            message: "What is the department this role is in?",
+            choices: function () {
+              const choicesArray = [];
+              for (let i = 0; i < res.length; i++) {
+                choicesArray.push(res[i].name);
+              }
+              return choicesArray;
+            },
           },
-          (err, res) => {
-            if (err) throw err;
-            console.log(res.affectedRows);
-            userOptions();
+          {
+            type: "input",
+            name: "title",
+            message: "What is the role title?",
+          },
+          {
+            type: "input",
+            name: "salary",
+            message: "What is the salary for this role?",
+          },
+        ])
+        .then((userInput) => {
+          console.log(userInput);
+          let chosenItem;
+          for (let i = 0; i < res.length; i++) {
+            if (userInput.choice === res[i].name) {
+              chosenItem = res[i];
+            }
           }
-        );
-      });
-  }
+          if (userInput.deptID === chosenItem.name) {
+            connection.query(
+              "INSERT INTO role SET ?",
+              {
+                name: userInput.title,
+                salary: userInput.salary,
+              },
+              {
+                department_id: chosenItem.id,
+              },
+              (err, res) => {
+                if (err) throw err;
+                console.log(res.affectedRows);
+                userOptions();
+              }
+            );
+          }
+        });
+    };
+}
 
 // Function to view all departments
 function viewAllDept() {
@@ -104,6 +163,8 @@ function viewAllDept() {
     userOptions();
   });
 }
+
+
 
 // When user chooses exit from list of choices, the CLI will end
 function exit() {
