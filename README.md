@@ -20,7 +20,11 @@ So that I can organize and plan my business
 
 Fork repository at [gstephbolivar github](https://github.com/gstephbolivar/employee-tracker) .
 
+-npm init -y
 
+-npm i inquirer
+
+-npm i mysql
 
 ## Usage
 
