@@ -172,7 +172,14 @@ function viewRoles() {
       userOptions();
     });
   }
-
+//   Function to view all employees
+function viewEmployees() {
+    connection.query("SELECT * FROM employee", (err, res) => {
+      if (err) throw err;
+      console.table(res);
+      userOptions();
+    });
+  }
 
 
 // When user chooses exit from list of choices, the CLI will end
