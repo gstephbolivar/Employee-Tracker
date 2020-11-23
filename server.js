@@ -95,14 +95,115 @@ function addDept() {
     });
 }
 
+// Function that creates an array of the departments to be called in addRole(); for user to choose 
+function deptChoice() {
+    let department= [];
+  connection.query("SELECT name FROM department", (err, res) => {
+    if (err) throw err;
+    for (let i = 0; i < res.length; i++){
+        department.push(res[i].name);
+    }
+  });
+  return department;
+}
+
 // Function to add a new role
-// TODO: Pick a dept to add role into
+function addRole() {
+  inquirer
+    .prompt([
+      {
+        type: "input",
+        name: "title",
+        message: "What is title of this position?",
+      },
+      {
+        type: "input",
+        name: "salary",
+        message: "What is the salary for this position?",
+      },
+      {
+          type: "list",
+          name: "deptchoice",
+          message: "What department would you like to add this role to?",
+          choices: deptChoice(),
+      },
+    ])
+    .then((userInput) => {
+      console.log(userInput);
+      connection.query("INSERT INTO role SET ?",
+      {
+          title: userInput.title,
+          salary: userInput.salary,
+          department_id: userInput.deptChoice,
+      },
+       (err, res) => {
+          if (err) throw err;
+        // console.log("You did it!");
+      })
+      userOptions();
+    });
+}
+
+// function to add a new employee
+function addEmployee() {}
+
+// Function to view all departments
+function viewAllDept() {
+  connection.query("SELECT name as department FROM department", (err, res) => {
+    if (err) throw err;
+    const table = cTable.getTable(res);
+    console.log(table);
+    userOptions();
+  });
+}
+
+// Function to view all roles
+function viewRoles() {
+  connection.query("SELECT title FROM role", (err, res) => {
+    if (err) throw err;
+    const table = cTable.getTable(res);
+    console.log(table);
+    userOptions();
+  });
+}
+//   Function to view all employees
+function viewEmployees() {
+  // TODO: Figure out how to include a manager in here
+  connection.query(
+    "SELECT employee.id, first_name, last_name, role.title, department.name AS department, role.salary FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id",
+    (err, res) => {
+      if (err) throw err;
+      const table = cTable.getTable(res);
+      console.log(table);
+      userOptions();
+    }
+  );
+}
+
+// Function to update en employee role
+function updateEmployeeRole() {}
+
+// When user chooses exit from list of choices, the CLI will end
+function exit() {
+  connection.end();
+}
+
 // function addRole() {
 //   connection.query("SELECT * FROM department"),
 //     (err, res) => {
 //       if (err) throw err;
 //       inquirer
 //         .prompt([
+//           {
+//             type: "input",
+//             name: "title",
+//             message: "What is the role title?",
+//           },
+//           {
+//             type: "input",
+//             name: "salary",
+//             message: "What is the salary for this role?",
+//           },
 //           {
 //             type: "list",
 //             name: "deptId",
@@ -114,16 +215,6 @@ function addDept() {
 //               }
 //               return choicesArray;
 //             },
-//           },
-//           {
-//             type: "input",
-//             name: "title",
-//             message: "What is the role title?",
-//           },
-//           {
-//             type: "input",
-//             name: "salary",
-//             message: "What is the salary for this role?",
 //           },
 //         ])
 //         .then((userInput) => {
@@ -153,45 +244,4 @@ function addDept() {
 //           }
 //         });
 //     };
-// }
-
-// function to add a new employee
-function addEmployee() {}
-
-// Function to view all departments
-function viewAllDept() {
-  connection.query("SELECT name as department FROM department", (err, res) => {
-    if (err) throw err;
-    const table = cTable.getTable(res);
-    console.log(table);
-    userOptions();
-  });
-}
-
-// Function to view all roles
-function viewRoles() {
-  connection.query("SELECT title FROM role", (err, res) => {
-    if (err) throw err;
-    const table = cTable.getTable(res);
-    console.log(table);
-    userOptions();
-  });
-}
-//   Function to view all employees
-function viewEmployees() {
-    // TODO: Figure out how to include a manager in here
-  connection.query("SELECT employee.id, first_name, last_name, role.title, department.name AS department, role.salary FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id", (err, res) => {
-    if (err) throw err;
-    const table = cTable.getTable(res);
-    console.log(table);
-    userOptions();
-  });
-}
-
-// Function to update en employee role
-function updateEmployeeRole() {}
-
-// When user chooses exit from list of choices, the CLI will end
-function exit() {
-  connection.end();
-}
+//  }
