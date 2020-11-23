@@ -42,6 +42,8 @@ Fork repository at [gstephbolivar github](https://github.com/gstephbolivar/emplo
 
 I credit the following people and websites for assistance on this application:
 
+[NPMJS](https://www.npmjs.com/package/console.table)
+[BU Edu](http://g2pc1.bu.edu/~qzpeng/manual/MySQL%20Commands.htm)
 
 
 ## Questions
