@@ -129,12 +129,12 @@ function addRole() {
         connection.query(
           "INSERT INTO role SET ?",
           {
-              title: userInput.title,
-              salary: userInput.salary,
-              department_id: userInput.deptName
+            title: userInput.title,
+            salary: userInput.salary,
+            department_id: userInput.deptName,
           },
-          function(err, res) {
-              if (err) throw err;
+          function (err, res) {
+            if (err) throw err;
             // const table = cTable.getTable(res);
             // console.log(table);
             userOptions();
@@ -146,40 +146,86 @@ function addRole() {
 
 // Function to add a new employee
 function addEmployee() {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "firstname",
-        message: "What is the employees first name?",
-      },
-      {
-        type: "input",
-        name: "lastname",
-        message: "What is the employees last name?",
-      },
-      {
-        type: "list",
-        name: "rolechoice",
-        message: "What role does this employee have?",
-        choices: ["1", "2"],
-      },
-      // {
-      //     insert manager id here
-      // },
-    ])
-    .then((userInput) => {
-      console.log(userInput);
-      connection.query("INSERT INTO employee SET ?", {
-        first_name: userInput.firstname,
-        last_name: userInput.lastname,
-        role_id: userInput.rolechoice,
-      }),
-        (err, res) => {
-          if (err) throw err;
-        };
-      userOptions();
-    });
+  let newEmployee = {};
+  connection.query("SELECT * FROM role", (err, res) => {
+    inquirer
+      .prompt([
+        {
+          type: "input",
+          name: "firstname",
+          message: "What is the employees first name?",
+        },
+        {
+          type: "input",
+          name: "lastname",
+          message: "What is the employees last name?",
+        },
+        {
+          type: "list",
+          name: "rolechoice",
+          message: "What is the employee's role?",
+          choices: function () {
+            let choiceArray = [];
+            for (let i = 0; i < res.length; i++) {
+              choiceArray.push(res[i].title);
+            }
+            return choiceArray;
+          },
+        },
+      ])
+      .then((userInput) => {
+        newEmployee.first_name = userInput.first_name;
+        newEmployee.last_name = userInput.last_name;
+
+        connection.query(
+          "SELECT * FROM role WHERE title = ?",
+          userInput.rolechoice,
+          (err, res) => {
+            if (err) throw err;
+
+            newEmployee.role_id = res[0].id;
+
+            connection.query("SELECT * FROM employee", (err, res) => {
+              if (err) throw err;
+              inquirer
+                .prompt([
+                  {
+                    type: "list",
+                    name: "managerName",
+                    message: "Who is this employee's manager?",
+                    choices: function () {
+                      let choiceArray = [];
+                      for (let i = 0; i < res.length; i++) {
+                        choiceArray.push(res[i].first_name);
+                      }
+                      return choiceArray;
+                    },
+                  },
+                ])
+                .then((userInput) => {
+                  connection.query(
+                    "SELECT id FROM employee WHERE first_name = ?",
+                    userInput.managerName,
+                    (err, res) => {
+                      if (err) throw err;
+                      newEmployee.manager_id = res[0].id;
+
+                      connection.query(
+                        "INSERT INTO employee SET ?",
+                        newEmployee,
+                        (err, res) => {
+                          if (err) throw err;
+                          userOptions();
+                        }
+                      );
+                    }
+                  );
+                });
+            });
+          }
+        );
+      });
+  });
 }
 
 // Function to view all departments
@@ -203,9 +249,8 @@ function viewRoles() {
 }
 //   Function to view all employees
 function viewEmployees() {
-  // TODO: Figure out how to include a manager in here
   connection.query(
-    "SELECT employee.id, first_name, last_name, role.title, department.name AS department, role.salary FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id",
+    "SELECT employee.id, first_name, last_name, role.title, department.name AS department, role.salary, manager_id FROM employee INNER JOIN role ON employee.role_id = role.id INNER JOIN department ON role.department_id = department.id",
     (err, res) => {
       if (err) throw err;
       const table = cTable.getTable(res);
