@@ -174,8 +174,8 @@ function addEmployee() {
         },
       ])
       .then((userInput) => {
-        newEmployee.first_name = userInput.first_name;
-        newEmployee.last_name = userInput.last_name;
+        newEmployee.first_name = userInput.firstname;
+        newEmployee.last_name = userInput.lastname;
 
         connection.query(
           "SELECT * FROM role WHERE title = ?",
