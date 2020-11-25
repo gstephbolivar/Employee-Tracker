@@ -99,7 +99,7 @@ function addDept() {
 function addRole() {
   connection.query("SELECT * FROM department", (err, res) => {
     if (err) throw err;
-    console.log(res);
+    // console.log(res);
     inquirer
       .prompt([
         {
@@ -119,7 +119,7 @@ function addRole() {
           choices: function () {
             let choiceArray = [];
             for (let i = 0; i < res.length; i++) {
-              choiceArray.push(res[i].name);
+              choiceArray.push({ name: res[i].name, value: res[i].id });
             }
             return choiceArray;
           },
@@ -127,29 +127,21 @@ function addRole() {
       ])
       .then((userInput) => {
         connection.query(
-          "SELECT * FROM department WHERE name = ?",
-          [userInput.deptName],
-          function (err) {
-            if (err) throw err;
-            console.log(res);
+          "INSERT INTO role SET ?",
+          {
+              title: userInput.title,
+              salary: userInput.salary,
+              department_id: userInput.deptName
+          },
+          function(err, res) {
+              if (err) throw err;
+            // const table = cTable.getTable(res);
+            // console.log(table);
             userOptions();
           }
         );
       });
   });
-}
-
-//
-function roleChoice() {
-  let role = [];
-  connection.query("SELECT * FROM role", (err, res) => {
-    if (err) throw err;
-    for (let i = 0; i < res.length; i++) {
-      role.push(res[i].title);
-      // return role;
-    }
-  });
-  return role;
 }
 
 // Function to add a new employee
