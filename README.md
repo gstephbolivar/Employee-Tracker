@@ -36,7 +36,7 @@ A user can contribute to this application by adding prompts to delete a departme
 
 ## Test
 
-[YouTubeDemo]()
+[YouTubeDemo](https://youtu.be/SybB5iC7T_E)
 
 ## Credits
 
@@ -44,6 +44,8 @@ I credit the following people and websites for assistance on this application:
 
 [NPMJS](https://www.npmjs.com/package/console.table)
 [BU Edu](http://g2pc1.bu.edu/~qzpeng/manual/MySQL%20Commands.htm)
+[NPMJS](https://www.npmjs.com/package/console.table)
+
 
 
 ## Questions

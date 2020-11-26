@@ -286,7 +286,7 @@ function updateEmployeeRole() {
             message: "Which employee would you like to update?",
             choices: function () {
               let choiceArray = [];
-              for (var i = 0; i < results.length; i++) {
+              for (var i = 0; i < res.length; i++) {
                 choiceArray.push(res[i].first_name);
               }
               return choiceArray;
