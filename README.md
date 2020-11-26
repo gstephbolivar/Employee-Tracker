@@ -28,15 +28,15 @@ Fork repository at [gstephbolivar github](https://github.com/gstephbolivar/emplo
 
 ## Usage
 
-
+This CLI application allows a user to create their team. The user is able to add a new department, add a new role and add a new employee. Upon entering a new employee, the user is prompted to not only input their name but also pick what their role is and who their manager is. Based off this information, when the user looks at all employees, we can see what department the employee belongs to. 
 
 ## Contributing
 
-
+A user can contribute to this application by adding prompts to delete a department, role, and/or employee. 
 
 ## Test
 
-
+[YouTubeDemo]()
 
 ## Credits
 
